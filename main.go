@@ -3,11 +3,44 @@ package main
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 	"unicode/utf8"
 )
 
+type block struct {
+	version       uint32
+	timestamp     uint64
+	merkleRoot    []byte // bytes and uint8 are the same
+	prevBlockHash []byte
+	difficulty    uint64
+	transactions  []tx
+}
+
+func (b block) getRoot() []byte {
+	return b.merkleRoot
+}
+
+type tx struct{}
+
 func main() {
+
+	emptyBlock := block{}
+	fmt.Println(emptyBlock)
+
+	var emptyBlock2 block
+	fmt.Println(emptyBlock2)
+
+	var someBlock = struct {
+		version       uint32
+		timestamp     uint64
+		merkleRoot    []byte // bytes and uint8 are the same
+		prevBlockHash []byte
+		difficulty    uint64
+		transactions  []tx
+	}{ /*respective values*/ }
+	fmt.Println(someBlock)
+
 	var intNum uint32
 	fmt.Println(intNum)
 
@@ -120,6 +153,66 @@ func main() {
 	var testSlice1 = make([]int, 0, n)
 	fmt.Printf("\nTotal time without preallocation of capacity: %v", timeLoop(testSlice, n))
 	fmt.Printf("\nTotal time with preallocation: %v", timeLoop(testSlice1, n))
+
+	myString := []rune("héllo Mffffssssssș")
+	var indexed = myString[0]
+	fmt.Println("\n", indexed)
+	fmt.Printf("value: %v, Type: %T\n", indexed, indexed)
+
+	for i, v := range myString {
+		fmt.Println(i, v)
+	}
+
+	strSlice := []string{"h", "e", "l", "l", "ǒ"}
+	var strBuilder strings.Builder
+	for i := range strSlice {
+		strBuilder.WriteString(strSlice[i])
+	}
+	var concatStrSlice = strBuilder.String()
+	fmt.Println(concatStrSlice)
+
+	var p *int32               // this holds a nil value in it, because it points to literally nothing
+	var i int32                // the value held here is 0
+	var p1 *int32 = new(int32) // the value here here is some memory address (not nil) that points to a value of 0 somewhere in memory
+	fmt.Printf("the value in pointer p is nothing, and its memory address is %v\n", p)
+	fmt.Printf("the value of i is %v, pointer p1 stores the memory address: %v, value in p1 is: %v\n", i, p1, *p1)
+
+	/* *p = 67
+	fmt.Printf("after resetting p, its memory address: %v, its value: %v", p, *p)
+	*/
+	// cannot derefence a nil pointer:
+	// dereferencing means to read/ write data in a memory address, but there literally exists no address
+
+	*p1 = 55
+	fmt.Printf("after dereferencing p1, its new value: %v, its new memory address: %v is same as old\n", *p1, p1)
+
+	//var p2 *int32 = new(int32)
+	p2 := &i
+	fmt.Printf("the memory address of i is %v\n", p2)
+	*p2 = 67
+	fmt.Println(i)
+
+	someSl := []int32{1, 1, 2, 3}
+	sliceCopy := someSl
+	sliceCopy[2] = 4 // this will change both the slice and its copy
+	fmt.Println(someSl, sliceCopy)
+	// this happens because slices contain pointers to an underlying array
+	// both variables refer to the same data in memory
+
+	decArr := [5]float64{8, 3.14, 9.81, 2.71, 256}
+	fmt.Printf("The memory location of decArr is %p\n", &decArr)
+	arrSquared := square(decArr)
+	fmt.Printf("squaring everything in decArr gives %v\n", arrSquared)
+	// copy=> different address and pointers=> same address
+
+}
+
+func square(decArr [5]float64) [5]float64 {
+	fmt.Printf("the memory location of decArr is %p\n", &decArr)
+	for i := range decArr {
+		decArr[i] = decArr[i] * decArr[i]
+	}
+	return decArr
 }
 
 func timeLoop(slice []int, n int) time.Duration {
