@@ -3,7 +3,9 @@ package main
 import (
 	"errors"
 	"fmt"
+	"math/rand"
 	"strings"
+	"sync"
 	"time"
 	"unicode/utf8"
 )
@@ -205,6 +207,76 @@ func main() {
 	fmt.Printf("squaring everything in decArr gives %v\n", arrSquared)
 	// copy=> different address and pointers=> same address
 
+	/* t00 := time.Now()
+	for i := 0; i < 1000; i++ {
+		wg.Add(1)
+		go count()
+	}
+	wg.Wait()
+	fmt.Printf("time taken for execution since t00 is %v\n", time.Since(t00))
+	fmt.Printf("The results are: %v\n", results)
+	*/
+
+	c := make(chan int, 5)
+	go process(c)
+	for i := range c {
+		fmt.Println(i)
+		// time.Sleep(time.Second * 1)
+	}
+
+	chickenChannel := make(chan string)
+	websites := []string{"site1.com", "site2.com", "site3.com"}
+	for i := range websites {
+		go checkChickenPrices(websites[i], chickenChannel)
+	}
+	sendMessage(chickenChannel)
+}
+
+const MAX_CHICKEN_PRICE float32 = 5
+
+func checkChickenPrices(website string, chickenChannel chan string) {
+	for {
+		time.Sleep(time.Second * 1)
+		chickenPrice := rand.Float32() * 20
+		if chickenPrice <= MAX_CHICKEN_PRICE {
+			chickenChannel <- website
+			break
+		}
+	}
+}
+
+func sendMessage(chickenChannel chan string) {
+	fmt.Printf("found a deal on chicken on website %s", <-chickenChannel)
+}
+
+func process(c chan int) {
+	defer close(c) // close right before function exits
+	for i := 0; i < 5; i++ {
+		c <- i
+	}
+	fmt.Println("Exiting function")
+}
+
+var m = sync.Mutex{}
+var wg = sync.WaitGroup{}
+var dbData = []string{"aaj mood nahi", "diet coke", "omega 3", "beer"}
+var results = []string{}
+
+func dbCall(i int) {
+	//m.Lock()
+	time.Sleep(time.Second * 2)
+	// fmt.Printf("The result from database is %v\n", dbData[i])
+	// m.Lock()
+
+	wg.Done()
+}
+
+func count() {
+	var count int
+	for i := 0; i < 1000000; i++ {
+		count += 1
+	}
+	wg.Done()
 }
 
 func square(decArr [5]float64) [5]float64 {
