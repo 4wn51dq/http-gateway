@@ -1,0 +1,4 @@
+github.com/gorilla/mux v1.8.1 h1:TuBL49tXwgrFYWhqrNgrUNEY92u81SPhu7sTdzQEiWY=
+github.com/gorilla/mux v1.8.1/go.mod h1:AKf9I4AEqPTmMytcMc0KkNouC66V3BtZ4qD5fmWSiMQ=
+k8s.io/utils v0.0.0-20251222233032-718f0e51e6d2 h1:OfgiEo21hGiwx1oJUU5MpEaeOEg6coWndBkZF/lkFuE=
+k8s.io/utils v0.0.0-20251222233032-718f0e51e6d2/go.mod h1:xDxuJ0whA3d0I4mf/C4ppKHxXynQ+fxnkmQH0vTHnuk=
