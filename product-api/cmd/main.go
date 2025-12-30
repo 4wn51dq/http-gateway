@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	handlers "product-api/products"
+	handlers "product-api/handlers"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -27,9 +27,11 @@ func main() {
 
 	putRouter := serveMux.Methods(http.MethodPut).Subrouter()
 	putRouter.HandleFunc("/{id:[0-9]+}", productHandler.UpdateProduct)
+	putRouter.Use(productHandler.MiddlewareProductValidation)
 
 	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/", productHandler.AddProducts)
+	postRouter.Use(productHandler.MiddlewareProductValidation)
 
 	s := http.Server{
 		Addr:         bindAddr,
