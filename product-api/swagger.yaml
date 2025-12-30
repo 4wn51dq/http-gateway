@@ -1,0 +1,71 @@
+basePath: /
+consumes:
+    - application/json
+definitions:
+    Product:
+        x-go-package: product-api/data
+info:
+    description: '# Documentation for Product API'
+    title: of Product API
+    version: 0.0.1
+paths:
+    /products:
+        get:
+            operationId: listProducts
+            responses:
+                "200":
+                    $ref: '#/responses/productsResponse'
+                "500":
+                    $ref: '#/responses/errorResponse'
+            summary: Returns the list of products.
+            tags:
+                - products
+        post:
+            operationId: addProduct
+            responses:
+                "201":
+                    $ref: '#/responses/productResponse'
+                "400":
+                    $ref: '#/responses/errorResponse'
+            summary: Adds a new product.
+            tags:
+                - products
+    /products/{id}:
+        put:
+            operationId: updateProduct
+            parameters:
+                - format: int64
+                  in: path
+                  name: id
+                  required: true
+                  type: integer
+                  x-go-name: ID
+                - in: body
+                  name: Body
+                  required: true
+                  schema: {}
+            responses:
+                "200":
+                    $ref: '#/responses/productResponse'
+                "400":
+                    $ref: '#/responses/errorResponse'
+                "404":
+                    $ref: '#/responses/errorResponse'
+            summary: Updates an existing product.
+            tags:
+                - products
+produces:
+    - application/json
+responses:
+    errorResponse:
+        description: ""
+    productResponse:
+        description: ""
+    productsResponse:
+        description: ""
+        schema:
+            items: {}
+            type: array
+schemes:
+    - http
+swagger: "2.0"

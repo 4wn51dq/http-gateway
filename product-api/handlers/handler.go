@@ -1,3 +1,18 @@
+// Package Classification of Product API
+//
+// # Documentation for Product API
+//
+// Schemes: http
+// BasePath: /
+// Version: 0.0.1
+//
+// Consumes:
+//   - application/json
+//
+// Produces:
+//   - application/json
+//
+// swagger:meta
 package handlers
 
 import (
@@ -19,6 +34,14 @@ func NewProducts(l *log.Logger) *Products {
 	return &Products{l}
 }
 
+// swagger:route POST /products products addProduct
+//
+// Adds a new product.
+//
+// responses:
+//
+//	201: productResponse
+//	400: errorResponse
 func (p *Products) AddProducts(w http.ResponseWriter, r *http.Request) {
 	p.l.Printf("Handle POST products")
 
@@ -32,6 +55,14 @@ func (p *Products) AddProducts(w http.ResponseWriter, r *http.Request) {
 	data.AddProduct(product)
 }
 
+// swagger:route GET /products products listProducts
+//
+// Returns the list of products.
+//
+// responses:
+//
+//	200: productsResponse
+//	500: errorResponse
 func (p *Products) GetProducts(w http.ResponseWriter, r *http.Request) {
 	products := data.GetProducts()
 
@@ -42,6 +73,15 @@ func (p *Products) GetProducts(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// swagger:route PUT /products/{id} products updateProduct
+//
+// Updates an existing product.
+//
+// responses:
+//
+//	200: productResponse
+//	400: errorResponse
+//	404: errorResponse
 func (p Products) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "application/json")
 
@@ -91,4 +131,35 @@ func (p Products) MiddlewareProductValidation(next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r)
 	})
+}
+
+// swagger:response errorResponse
+type ErrorResponse struct {
+	// in: body
+	Body struct {
+		Message string `json:"message"`
+	}
+}
+
+// swagger:response productsResponse
+type ProductsResponse struct {
+	// in: body
+	Body []*data.Product
+}
+
+// swagger:response productResponse
+type ProductResponseWrapper struct {
+	// in: body
+	Body data.Product
+}
+
+// swagger:parameters updateProduct
+type UpdateProductParams struct {
+	// in: path
+	// required: true
+	ID int `json:"id"`
+
+	// in: body
+	// required: true
+	Body data.Product
 }
