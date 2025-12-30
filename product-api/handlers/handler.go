@@ -161,5 +161,5 @@ type UpdateProductParams struct {
 
 	// in: body
 	// required: true
-	Body data.Product
+	Body *data.Product
 }

@@ -24,6 +24,7 @@ func main() {
 
 	getRouter := serveMux.Methods(http.MethodGet).Subrouter() // gives a route filtered specifically for http verb: GET
 	getRouter.HandleFunc("/", productHandler.GetProducts)
+	getRouter.Use(productHandler.MiddlewareProductValidation)
 
 	putRouter := serveMux.Methods(http.MethodPut).Subrouter()
 	putRouter.HandleFunc("/{id:[0-9]+}", productHandler.UpdateProduct)
@@ -31,7 +32,6 @@ func main() {
 
 	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/", productHandler.AddProducts)
-	postRouter.Use(productHandler.MiddlewareProductValidation)
 
 	s := http.Server{
 		Addr:         bindAddr,
