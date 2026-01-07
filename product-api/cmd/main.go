@@ -9,6 +9,7 @@ import (
 	handlers "product-api/handlers"
 	"time"
 
+	gohandlers "github.com/gorilla/handlers" // gohandlers.CORS will provide CORS middleware.
 	"github.com/gorilla/mux"
 	"k8s.io/utils/env"
 )
@@ -33,9 +34,13 @@ func main() {
 	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/", productHandler.AddProducts)
 
+	// Cross Origin Resource Sharing (CORS)
+	ch := gohandlers.CORS(gohandlers.AllowedOrigins([]string{"http://localhost:8000"}))
+	// allowed origins is where you can run your shi
+
 	s := http.Server{
 		Addr:         bindAddr,
-		Handler:      serveMux,
+		Handler:      ch(serveMux),
 		ErrorLog:     l,
 		ReadTimeout:  5 * sec,
 		WriteTimeout: 10 * sec,

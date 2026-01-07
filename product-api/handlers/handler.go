@@ -110,6 +110,7 @@ func (p Products) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 
 type KeyProduct struct{}
 
+// the middleware is a gatekeeper before endpoint logic
 func (p Products) MiddlewareProductValidation(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		product := &data.Product{}
